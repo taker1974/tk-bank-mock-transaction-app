@@ -1,0 +1,8 @@
+{
+    "properties": [
+        {
+            "name": "spring.datasource.banking",
+            "description": "Bank DB properties"
+        }
+    ]
+}

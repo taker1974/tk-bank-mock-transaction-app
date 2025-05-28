@@ -1,0 +1,15 @@
+[Unit]
+Description=TKSoft tk-bank-mock-transaction service
+
+[Service]
+User=tkbank
+WorkingDirectory=/opt/tk-bank-mock-transaction/
+
+ExecStart=/usr/bin/java -jar /opt/tk-bank-mock-transaction/tk-bank-mock-transaction.jar --server.port=8092
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
