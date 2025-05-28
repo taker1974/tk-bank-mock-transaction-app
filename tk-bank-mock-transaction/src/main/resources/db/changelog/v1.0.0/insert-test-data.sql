@@ -27,3 +27,20 @@ VALUES (
         '1970-01-01',
         '12345678'
     );
+
+-- changeSet kostusonline:b5f1b36e-4442-5324-a995-0592036b330b runOnChange:true
+INSERT INTO
+    "account" ("user_id", "balance")
+SELECT u.id, 10.0
+FROM "user" u;
+
+-- changeSet kostusonline:eea18619-fa15-540c-b5b6-2b790c9f7f7f runOnChange:true
+INSERT INTO
+    "email_data" ("user_id", "email")
+SELECT u.id, CONCAT(u.name, '@gmail.com')
+FROM "user" u;
+
+-- changeSet kostusonline:f9fd5a5a-d374-5e39-aee2-53f9e23f7d46 runOnChange:true
+INSERT INTO "phone_data" ("user_id", "phone")
+SELECT u.id, CONCAT('+7922333445', u.id)
+FROM "user" u;

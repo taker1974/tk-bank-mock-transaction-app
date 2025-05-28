@@ -43,7 +43,7 @@ public class MaintenanceController {
      * Clear caches.
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Clear caches")
+    @Operation(summary = "Clear caches", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/clear-caches")
     public void clearCaches() {
 
