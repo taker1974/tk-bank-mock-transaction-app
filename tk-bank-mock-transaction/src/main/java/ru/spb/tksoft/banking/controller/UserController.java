@@ -3,6 +3,7 @@ package ru.spb.tksoft.banking.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.user.UserInfoDto;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get user info")
+    @Operation(summary = "Get user info", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/info")
     public UserInfoDto getUserInfo(@AuthenticationPrincipal JwtUser user) {
 
