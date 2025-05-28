@@ -2,10 +2,10 @@
 
 -- changeSet kostusonline:e49d6346-9ce6-56c6-b699-7a833edfa7e8 runOnChange:true
 INSERT INTO
-    'user' (
-        'name',
-        'date_of_birth',
-        'password'
+    "user" (
+        "name",
+        "date_of_birth",
+        "password"
     )
 VALUES (
         'Anton',

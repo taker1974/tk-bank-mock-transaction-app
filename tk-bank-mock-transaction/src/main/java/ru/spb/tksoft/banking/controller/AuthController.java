@@ -11,10 +11,12 @@ import ru.spb.tksoft.banking.dto.auth.AuthResponseDto;
 import ru.spb.tksoft.banking.dto.auth.LoginRequestDto;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * Auth controller.
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
 @RestController
-@RequestMapping(value = "/login")
+@RequestMapping("/auth")
 @Tag(name = "Authentication")
 @RequiredArgsConstructor
 public class AuthController {
@@ -38,8 +40,15 @@ public class AuthController {
      * @param request login credentials.
      * @return Generated JWT token.
      */
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Login")
+    @Operation(
+            summary = "Authentication",
+            description = "Getting JWT token by email and password",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Logged In",
+                            content = @Content(
+                                    schema = @Schema(implementation = AuthResponseDto.class)))})
     @PostMapping("/login")
     public AuthResponseDto login(@RequestBody LoginRequestDto request) {
 
