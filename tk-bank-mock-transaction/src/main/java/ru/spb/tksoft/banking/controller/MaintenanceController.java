@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.maintenance.MaintenanceInfoDto;
@@ -30,7 +31,7 @@ public class MaintenanceController {
      * @return Application info.
      */
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "About")
+    @Operation(summary = "About", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/info")
     public MaintenanceInfoDto getInfo() {
 
@@ -42,7 +43,7 @@ public class MaintenanceController {
      * Clear caches.
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Clear caches")
+    @Operation(summary = "Clear caches", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/clear-caches")
     public void clearCaches() {
 

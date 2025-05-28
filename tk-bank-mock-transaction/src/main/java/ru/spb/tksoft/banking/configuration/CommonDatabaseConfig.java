@@ -28,7 +28,7 @@ public class CommonDatabaseConfig {
      * 
      * @return Main datasource.
      */
-    @Bean(name = "bankingDataSource")
+    @Bean(name = "bankDataSource")
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource.banking")
     public DataSource bankingDataSource() {
