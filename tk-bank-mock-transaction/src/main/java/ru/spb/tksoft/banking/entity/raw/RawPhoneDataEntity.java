@@ -1,4 +1,4 @@
-package ru.spb.tksoft.banking.entity;
+package ru.spb.tksoft.banking.entity.raw;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User's phone. Many-to-one association with {@link ru.spb.tksoft.banking.entity.UserEntity}
- * 
- * @see ru.spb.tksoft.banking.model.PhoneData
+ * User's phone, just data, without relations.
  * 
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
@@ -29,17 +28,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "phone_data")
-public class PhoneDataEntity {
+public class RawPhoneDataEntity {
 
     /** Unique ID. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** User. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private UserEntity user;
+    /** User ID. */
+    @Column(name = "user_id", nullable = false)
+    @NotNull
+    private Long userId;
 
     /** Phone number. */
     @Column(name = "phone", nullable = false, length = 13, unique = true)

@@ -1,9 +1,7 @@
-package ru.spb.tksoft.banking.dto.user;
+package ru.spb.tksoft.banking.dto.user.raw;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.NotBlank;
@@ -13,21 +11,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User info.
+ * User DTO, just "user" data
  * 
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "date_of_birth", "password", "balance", "emails", "phones"})
-public class UserInfoDto {
+@JsonPropertyOrder({"id", "name", "password", "date_of_birth"})
+public class RawUserDto {
 
-    /** User ID. */
+    /** Unique user ID. */
     @NotNull
     private long id;
 
-    /** User's date of birth. */
+    /** Name. */
+    @NotBlank
+    private String name;
+
+    /** Password. */
+    @NotBlank
+    private String password;
+
+    /** Date of birth. */
     @JsonProperty("date_of_birth")
     @NotNull
     private LocalDate birthDate;
@@ -41,20 +47,4 @@ public class UserInfoDto {
 
         return birthDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
-
-    /** User's password. */
-    @NotBlank
-    private String password;
-
-    /** Current user's balance. */
-    @NotNull
-    private BigDecimal balance;
-
-    /** User's email list. */
-    @NotNull
-    private List<String> emails;
-
-    /** User's phone list. */
-    @NotNull
-    private List<String> phones;
 }

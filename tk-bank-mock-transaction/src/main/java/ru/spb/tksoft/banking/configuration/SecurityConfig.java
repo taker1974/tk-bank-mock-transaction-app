@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.controller.AuthController;
 import ru.spb.tksoft.banking.controller.JwtUser;
+import ru.spb.tksoft.banking.service.AuthServiceCached;
 
 /**
  * Spring security config.
@@ -97,7 +98,7 @@ public class SecurityConfig {
             if (header != null && header.startsWith("Bearer ")) {
                 String token = header.substring(7);
                 var claims = Jwts.parser()
-                        .verifyWith(AuthController.SECRET_KEY)
+                        .verifyWith(AuthServiceCached.SECRET_KEY)
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();

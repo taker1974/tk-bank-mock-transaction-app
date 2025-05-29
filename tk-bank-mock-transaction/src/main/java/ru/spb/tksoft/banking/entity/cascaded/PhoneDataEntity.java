@@ -1,4 +1,4 @@
-package ru.spb.tksoft.banking.entity;
+package ru.spb.tksoft.banking.entity.cascaded;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,9 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User's email. Many-to-one association with {@link ru.spb.tksoft.banking.entity.UserEntity}
- * 
- * @see ru.spb.tksoft.banking.model.EmailData
+ * User's phone.
  * 
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
@@ -29,8 +26,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "email_data")
-public class EmailDataEntity {
+@Table(name = "phone_data")
+public class PhoneDataEntity {
 
     /** Unique ID. */
     @Id
@@ -42,10 +39,9 @@ public class EmailDataEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;
 
-    /** Email. */
-    @Column(name = "email", nullable = false, length = 200, unique = true)
-    @Size(max = 200)
+    /** Phone number. */
+    @Column(name = "phone", nullable = false, length = 13, unique = true)
+    @Size(max = 13)
     @NotBlank
-    @Email
-    private String email;
+    private String phone;
 }

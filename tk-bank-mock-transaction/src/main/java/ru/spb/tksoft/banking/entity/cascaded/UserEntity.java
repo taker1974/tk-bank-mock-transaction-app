@@ -1,4 +1,4 @@
-package ru.spb.tksoft.banking.entity;
+package ru.spb.tksoft.banking.entity.cascaded;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +21,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * User entity.
- * 
- * @see ru.spb.tksoft.banking.model.User
  * 
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */

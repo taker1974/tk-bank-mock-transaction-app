@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.maintenance.MaintenanceInfoDto;
+import ru.spb.tksoft.banking.service.AuthServiceCached;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequiredArgsConstructor
 public class MaintenanceController {
 
+    @NotNull
     private final BuildProperties buildProperties;
+
+    @NotNull
+    private final AuthServiceCached authServiceCached;
 
     /**
      * @return Application info.
@@ -47,6 +53,6 @@ public class MaintenanceController {
     @PostMapping("/clear-caches")
     public void clearCaches() {
 
-        // ...
+        authServiceCached.clearCaches();
     }
 }

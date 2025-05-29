@@ -3,3 +3,5 @@ databaseChangeLog:
           file: "db/changelog/v1.0.0/create-tables.sql"
     - include:
           file: "db/changelog/v1.0.0/insert-test-data.sql"
+    - include:
+          file: "db/changelog/v1.0.0/account-add-autolimit.sql"
