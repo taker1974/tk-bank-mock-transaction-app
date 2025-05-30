@@ -3,6 +3,10 @@
         {
             "name": "spring.datasource.banking",
             "description": "Bank DB properties"
+        },
+        {
+            "name": "banking.autoincrement.period.cron",
+            "description": "Period of balance autoincrement"
         }
     ]
 }

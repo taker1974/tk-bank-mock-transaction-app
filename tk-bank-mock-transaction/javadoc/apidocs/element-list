@@ -5,3 +5,8 @@ ru.spb.tksoft.banking.controller.advice
 ru.spb.tksoft.banking.dto.auth
 ru.spb.tksoft.banking.dto.maintenance
 ru.spb.tksoft.banking.dto.user
+ru.spb.tksoft.banking.entity
+ru.spb.tksoft.banking.mapper
+ru.spb.tksoft.banking.repository
+ru.spb.tksoft.banking.service
+ru.spb.tksoft.banking.tools

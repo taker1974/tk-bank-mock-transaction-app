@@ -26,47 +26,50 @@ import lombok.RequiredArgsConstructor;
  */
 @Configuration
 @EnableTransactionManagement
-@EntityScan(basePackages = {"ru.spb.tksoft.banking.entity"})
+@EntityScan(basePackages = {
+        "ru.spb.tksoft.banking.entity"})
 @EnableJpaRepositories(
-                entityManagerFactoryRef = "bankingEntityManagerFactory",
-                transactionManagerRef = "bankingTransactionManager",
-                basePackages = {"ru.spb.tksoft.banking.repository"})
+        entityManagerFactoryRef = "bankingEntityManagerFactory",
+        transactionManagerRef = "bankingTransactionManager",
+        basePackages = {
+                "ru.spb.tksoft.banking.repository"})
 @RequiredArgsConstructor
 public class BankDatabaseConfig {
 
-        private final Environment environment;
+    private final Environment environment;
 
-        /**
-         * Create fabric of entities and sessions for banking.
-         * 
-         * @param builder Instance of EntityManagerFactoryBuilder.
-         * @param dataSource DataSource for banking.
-         * @return Instance of entity manager factory.
-         */
-        @Bean(name = "bankingEntityManagerFactory")
-        public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
-                        EntityManagerFactoryBuilder builder,
-                        @Qualifier("bankDataSource") DataSource dataSource) {
+    /**
+     * Create fabric of entities and sessions for banking.
+     * 
+     * @param builder Instance of EntityManagerFactoryBuilder.
+     * @param dataSource DataSource for banking.
+     * @return Instance of entity manager factory.
+     */
+    @Bean(name = "bankingEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
+            EntityManagerFactoryBuilder builder,
+            @Qualifier("bankDataSource") DataSource dataSource) {
 
-                HashMap<String, Object> properties = new HashMap<>();
-                properties.put("hibernate.dialect",
-                                environment.getProperty("spring.jpa.database-platform"));
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.dialect",
+                environment.getProperty("spring.jpa.database-platform"));
 
-                return builder.dataSource(dataSource)
-                                .packages("ru.spb.tksoft.banking.entity")
-                                .properties(properties).build();
-        }
+        return builder.dataSource(dataSource)
+                .packages(
+                        "ru.spb.tksoft.banking.entity")
+                .properties(properties).build();
+    }
 
-        /**
-         * Create transaction manager for banking.
-         * 
-         * @param entityManagerFactory Fabric of entities and sessions for banking.
-         * @return Instance of transaction manager for banking.
-         */
-        @Bean(name = "bankingTransactionManager")
-        public PlatformTransactionManager postgresTransactionManager(
-                        @Qualifier("bankingEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+    /**
+     * Create transaction manager for banking.
+     * 
+     * @param entityManagerFactory Fabric of entities and sessions for banking.
+     * @return Instance of transaction manager for banking.
+     */
+    @Bean(name = "bankingTransactionManager")
+    public PlatformTransactionManager postgresTransactionManager(
+            @Qualifier("bankingEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
 
-                return new JpaTransactionManager(entityManagerFactory);
-        }
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 }

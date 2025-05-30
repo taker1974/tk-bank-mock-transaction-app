@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "TKBankMockApplication",
+            "request": "launch",
+            "mainClass": "ru.spb.tksoft.banking.TKBankMockApplication",
+            "projectName": "tk-bank-mock-transaction"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TKBankMockApplication<tk-bank-mock-transaction>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ru.spb.tksoft.bank.TKBankMockApplication",
+            "projectName": "tk-bank-mock-transaction",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=45667 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=tk-bank-mock-transaction"
+        }
+    ]
+}

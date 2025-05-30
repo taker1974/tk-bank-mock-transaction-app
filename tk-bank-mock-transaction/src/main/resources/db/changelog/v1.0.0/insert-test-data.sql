@@ -1,5 +1,8 @@
 -- liquibase formatted sql
 
+-- Generated token for Anton:
+-- eyJhbGciOiJIUzI1NiJ9.eyJVU0VSX0lEIjo1LCJzdWIiOiJBbnRvbkBnbWFpbC5jb20iLCJpYXQiOjE3NDg1ODAwNjEsImV4cCI6MTc0ODY2NjQ2MX0.eUvDBPrhk6IVOVNJUyOp95atnkjxfLaYpEEVz4ii9xg
+
 -- changeSet kostusonline:e49d6346-9ce6-56c6-b699-7a833edfa7e8 runOnChange:true
 INSERT INTO
     "user" (
@@ -41,6 +44,7 @@ SELECT u.id, CONCAT(u.name, '@gmail.com')
 FROM "user" u;
 
 -- changeSet kostusonline:f9fd5a5a-d374-5e39-aee2-53f9e23f7d46 runOnChange:true
-INSERT INTO "phone_data" ("user_id", "phone")
+INSERT INTO
+    "phone_data" ("user_id", "phone")
 SELECT u.id, CONCAT('+7922333445', u.id)
 FROM "user" u;

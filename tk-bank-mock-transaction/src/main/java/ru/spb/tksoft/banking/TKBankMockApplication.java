@@ -2,6 +2,7 @@ package ru.spb.tksoft.banking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Main application class.
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
 @SpringBootApplication
+@EnableScheduling
 public class TKBankMockApplication {
 
 	/**

@@ -1,30 +1,54 @@
-# TK-Recommendations-App
+# tk-bank-mock-transaction-app
 
 ## О приложении
 
-Серверное приложение для рекомендаций банковских продуктов.
-Spring Boot, Java, Telegram API.
+Тестовое серверное приложение для демонстрации простейших банковских операций.
+Условия тестового задания см. в файле "Тестовое задание Java.docx".
+Приложение Java, Spring Boot.
 
-Основное приложение - tk-recommendations.
-Бот Telegram для основного приложения - tk-recommendations-bot.
+## Подготовка к развёртыванию на узле
 
-Связанный модуль DTO - tk-recommendations-dto.
+**Требуемое ПО**:
 
-## Краткие инструкции по сборке и развёртыванию
+- PostgreSQL >= 15;
+- Java >= 21.
 
-Серверное приложение для рекомендаций банковских продуктов.
-Смотри [tk-recommendations/ReadMe.md](https://github.com/taker1974/tk-recommendations-app/blob/main/tk-recommendations/ReadMe.md)
+Версии ПО могут быть другими. При разработке используется Postgres 15 и 17 и Java 21: нет никаких явных ограничений на использование других версий ПО.
 
-Бот для Telegram. Приложение-компаньон для серверного приложения рекомендаций банковских продуктов.
-Смотри [tk-recommendations-bot/ReadMe.md](https://github.com/taker1974/tk-recommendations-app/blob/main/tk-recommendations-bot/ReadMe.md)
+**В Postgres**:
 
-Файлы-описания сервисов для systemd - tk-recommendations*.service в соответствующих директориях.
+- предварительно смотрим application.yml;
+- создаём БД tk_bank, создаём пользователя "bank_god" с паролем "87654321", отдаём БД tk_bank во владение пользователю bank_god:
 
-## Документы-основания для разработки и результаты анализа требований
+```Bash
+$ sudo -u postgres psql
+postgres=# CREATE DATABASE tk_bank;
+CREATE DATABASE
+postgres=# CREATE USER bank_god WITH LOGIN PASSWORD '87654321';
+CREATE ROLE
+postgres=# ALTER DATABASE tk_bank OWNER TO bank_god;
+ALTER DATABASE
+```
 
-Тексты заданий практически без правок - смотри [tk-recommendations-docs/Technical-task-phase-*.md](https://github.com/taker1974/tk-recommendations-app/blob/main/tk-recommendations-docs/).
+При реальном использовании приложения, при дальнейшей перепубликации, логины и пароли, разумеется, следует скрывать: как минимум их надо просто передавать через параметры командной строки при запуске приложения.
 
-Анализ, рассуждения и прочее - смотри [tk-recommendations-docs/Phase-*-Analyze.md](https://github.com/taker1974/tk-recommendations-app/blob/main/tk-recommendations-docs/).
+**Java**:
+
+- установить JDK или JRE версии не ниже 21 (на этой версии ведётся разработка: нет никаких явных ограничений на использование других версий Java);
+- убедиться в правильности установки, в доступности java, javac, maven (mvn);
+
+## Запуск приложения
+
+Смотри pom.xml. В корне проекта:
+
+```Bash
+$mvn clean install
+$java -jar target/tk-bank-mock-transaction-0.0.1-SNAPSHOT.jar
+```
+
+В браузере:
+
+http://localhost:8092/tk-bank-mock-transaction/swagger-ui/index.html
 
 ## Документация
 
@@ -88,3 +112,13 @@ SNAPSHOT-версии: Плагин _versions-maven-plugin_ игнорирует
 
 Кастомные репозитории: Если артефакт размещен не в Maven Central, убедитесь, что  
 репозиторий добавлен в pom.xml/settings.xml.
+
+### Особенности текущей реализации
+
+Пока есть две версии entity - полные, с каскадированием зависимостей и т.п.,  
+и raw-версии - без отношений с другими сущностями. Пока это в процессе.
+
+Обеспечение безопасности операций в условиях многопоточности выполняется с помощью:
+
+- использования атомарных SQL-операций;
+- транзакционной обработки на уровне сервиса; при этом нет необходимости в оптимистичных блокировках.

@@ -2,15 +2,13 @@ package ru.spb.tksoft.banking.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.auth.AuthResponseDto;
 import ru.spb.tksoft.banking.dto.auth.LoginRequestDto;
-import java.util.Date;
-import javax.crypto.SecretKey;
+import ru.spb.tksoft.banking.service.AuthServiceCached;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,10 +27,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequiredArgsConstructor
 public class AuthController {
 
-    public static final SecretKey SECRET_KEY =
-            Keys.hmacShaKeyFor("c63002d3-43bc-52ea-bcf9-d27d96711bc9".getBytes());
-
-    private static final long EXPIRATION_TIME_MS = 86_400_000; // 24 hours
+    @NotNull
+    private final AuthServiceCached authServiceCached;
 
     /**
      * Try login with provided credentials.
@@ -48,27 +44,15 @@ public class AuthController {
                             responseCode = "200",
                             description = "Logged In",
                             content = @Content(
-                                    schema = @Schema(implementation = AuthResponseDto.class)))})
+                                    schema = @Schema(
+                                            implementation = AuthResponseDto.class)))})
     @PostMapping("/login")
     public AuthResponseDto login(@RequestBody LoginRequestDto request) {
 
-        // TODO Do not use java.util.Date!
-
-        // TODO Implement user authentication and token generation.
-        long userId = generateUserIdFromEmail(request.getEmail());
-
-        String token = Jwts.builder()
-                .claim("USER_ID", userId)
-                .subject(request.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
-                .signWith(SECRET_KEY)
-                .compact();
+        String token = authServiceCached
+                .getJwtToken(request.getEmail(), request.getPassword())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
         return new AuthResponseDto(token);
-    }
-
-    private long generateUserIdFromEmail(String email) {
-        return email.hashCode();
     }
 }
