@@ -67,5 +67,5 @@ management:
 
 banking:
   autoincrement:
-    period:
-      cron: "0/30 * * * * ?"
+    cron: "0/30 * * * * ?"
+    rate: 0.1

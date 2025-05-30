@@ -5,8 +5,12 @@
             "description": "Bank DB properties"
         },
         {
-            "name": "banking.autoincrement.period.cron",
-            "description": "Period of balance autoincrement"
+            "name": "banking.autoincrement.cron",
+            "description": "Period of balance autoincrement in crontab format"
+        },
+        {
+            "name": "banking.autoincrement.rate",
+            "description": "Rate of balance autoincrement, double, 0.0 .. 1.0"
         }
     ]
 }
