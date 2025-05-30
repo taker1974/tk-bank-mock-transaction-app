@@ -55,7 +55,8 @@ public class RawAccountServiceCached {
      * 
      * @return Paginated list of accounts.
      */
-    @Cacheable(value = "account", unless = "#result.isEmpty()")
+    @Cacheable(value = "account", unless = "#result.isEmpty()",
+            key = "{#pageable.pageNumber, #pageable.pageSize, #pageable.sort}")
     @NotNull
     public Page<RawAccountDto> getAllAccounts(Pageable pageable) {
 

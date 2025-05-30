@@ -34,7 +34,7 @@ public class RawUserServiceCached {
     private final RawUserRepository rawUserRepository;
 
     /** Clear caches. */
-    @CacheEvict(value = "user", allEntries = true)
+    @CacheEvict(value = "rawUser", allEntries = true)
     public void clearCaches() {
         // ...
     }
@@ -44,7 +44,8 @@ public class RawUserServiceCached {
      * 
      * @return Paginated list of users.
      */
-    @Cacheable(value = "user", unless = "#result.isEmpty()")
+    @Cacheable(value = "rawUser", unless = "#result.isEmpty()",
+            key = "{#pageable.pageNumber, #pageable.pageSize, #pageable.sort}")
     @NotNull
     public Page<RawUserDto> getAllUsers(Pageable pageable) {
 
