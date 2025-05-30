@@ -64,8 +64,8 @@ npx @redocly/cli build-docs <путь-к-openapi-файлу>
 Генерирование статического HTML из Swagger на примере основного приложения tk-recommendations:
 
 ```Bash
-curl http://localhost:8092/tk-recommendations/api-docs -o tk-recommendations-api-spec.json
-npx @redocly/cli build-docs tk-recommendations-api-spec.json -o tk-recommendations-swagger.html 
+curl http://localhost:8092/tk-bank-mock-transaction/api-docs -o tk-bank-mock-transaction-api-spec.json
+npx @redocly/cli build-docs tk-bank-mock-transaction-api-spec.json -o tk-bank-mock-transaction-swagger.html 
 ```
 
 ### JavaDoc -> HTML
