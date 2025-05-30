@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import ru.spb.tksoft.banking.dto.user.RawUserDto;
+import ru.spb.tksoft.banking.dto.RawUserDto;
 import ru.spb.tksoft.banking.service.RawUserServiceCached;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

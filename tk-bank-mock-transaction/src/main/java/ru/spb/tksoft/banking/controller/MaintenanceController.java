@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.maintenance.MaintenanceInfoDto;
 import ru.spb.tksoft.banking.service.AuthServiceCached;
+import ru.spb.tksoft.banking.service.RawAccountServiceCached;
+import ru.spb.tksoft.banking.service.RawUserServiceCached;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +35,12 @@ public class MaintenanceController {
     @NotNull
     private final AuthServiceCached authServiceCached;
 
+    @NotNull
+    private final RawAccountServiceCached rawAccountServiceCached;
+
+    @NotNull
+    private final RawUserServiceCached rawUserServiceCached;
+
     /**
      * @return Application info.
      */
@@ -54,5 +62,7 @@ public class MaintenanceController {
     public void clearCaches() {
 
         authServiceCached.clearCaches();
+        rawAccountServiceCached.clearCaches();
+        rawUserServiceCached.clearCaches();
     }
 }

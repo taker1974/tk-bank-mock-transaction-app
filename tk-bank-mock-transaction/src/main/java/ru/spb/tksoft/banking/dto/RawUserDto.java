@@ -1,4 +1,4 @@
-package ru.spb.tksoft.banking.dto.user;
+package ru.spb.tksoft.banking.dto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

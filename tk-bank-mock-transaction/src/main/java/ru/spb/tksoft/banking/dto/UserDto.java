@@ -1,4 +1,4 @@
-package ru.spb.tksoft.banking.dto.user;
+package ru.spb.tksoft.banking.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

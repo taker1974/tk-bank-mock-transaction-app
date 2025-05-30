@@ -2,7 +2,7 @@ package ru.spb.tksoft.banking.mapper;
 
 import javax.annotation.concurrent.ThreadSafe;
 import jakarta.validation.constraints.NotNull;
-import ru.spb.tksoft.banking.dto.user.RawUserDto;
+import ru.spb.tksoft.banking.dto.RawUserDto;
 import ru.spb.tksoft.banking.entity.RawUserEntity;
 
 /**

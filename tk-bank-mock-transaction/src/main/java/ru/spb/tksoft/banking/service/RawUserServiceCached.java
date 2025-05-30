@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import ru.spb.tksoft.banking.dto.user.RawUserDto;
+import ru.spb.tksoft.banking.dto.RawUserDto;
 import ru.spb.tksoft.banking.entity.RawUserEntity;
 import ru.spb.tksoft.banking.mapper.RawUserMapper;
 import ru.spb.tksoft.banking.repository.RawUserRepository;
