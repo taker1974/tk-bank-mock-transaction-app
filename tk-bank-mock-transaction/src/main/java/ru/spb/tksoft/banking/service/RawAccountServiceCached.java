@@ -62,12 +62,8 @@ public class RawAccountServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        List<RawAccountEntity> entities = rawAccountRepository.findAll();
-        List<RawAccountDto> dtos = new ArrayList<>(entities.size());
-
-        entities.stream().forEach(
-                entity -> dtos.add(
-                        RawAccountMapper.toDto(entity)));
+        List<RawAccountDto> dtos = rawAccountRepository.findAll().stream()
+                .map(RawAccountMapper::toDto).toList();
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
         return PageTools.convertListToPage(dtos, pageable);

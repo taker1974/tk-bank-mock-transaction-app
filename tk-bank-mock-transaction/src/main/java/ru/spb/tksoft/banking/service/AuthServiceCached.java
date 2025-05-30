@@ -80,4 +80,26 @@ public class AuthServiceCached {
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
         return Optional.of(token);
     }
+
+    /**
+     * Check if user with given email is valid (just exists).
+     * 
+     * @param email Email.
+     * @return Validity of user.
+     */
+    @Cacheable(value = "valid", key = "#email")
+    @NotNull
+    public boolean isValidUser(@NotNull final String email) {
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        boolean valid = userRepository.findByEMailExact(email).isPresent();
+        if (!valid) {
+            LogEx.warn(log, LogEx.getThisMethodName(),
+                    "user with given email is invalid: " + email);
+        }
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return valid;
+    }
 }

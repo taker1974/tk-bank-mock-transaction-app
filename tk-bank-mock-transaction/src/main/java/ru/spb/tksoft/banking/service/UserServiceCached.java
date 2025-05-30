@@ -41,6 +41,16 @@ public class UserServiceCached {
     }
 
     /**
+     * Find all users.
+     * 
+     * @param pageable Pagination settings.
+     * @return Paginated list of users.
+     */
+    public Page<UserDto> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(UserMapper::toDto);
+    }
+
+    /**
      * Find users by name%.
      * 
      * @return Paginated list of users.
@@ -54,12 +64,8 @@ public class UserServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        List<UserEntity> entities = userRepository.findByNameLike(namePrefix);
-        List<UserDto> dtos = new ArrayList<>(entities.size());
-
-        entities.stream().forEach(
-                entity -> dtos.add(
-                        UserMapper.toDto(entity)));
+        List<UserDto> dtos = userRepository.findByNameLike(namePrefix).stream()
+                .map(UserMapper::toDto).toList();
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
         return PageTools.convertListToPage(dtos, pageable);
@@ -79,12 +85,8 @@ public class UserServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        List<UserEntity> entities = userRepository.findByBirthDateEqualAndAfter(dateOfBirth);
-        List<UserDto> dtos = new ArrayList<>(entities.size());
-
-        entities.stream().forEach(
-                entity -> dtos.add(
-                        UserMapper.toDto(entity)));
+        List<UserDto> dtos = userRepository.findByBirthDateEqualAndAfter(dateOfBirth).stream()
+                .map(UserMapper::toDto).toList();
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
         return PageTools.convertListToPage(dtos, pageable);
