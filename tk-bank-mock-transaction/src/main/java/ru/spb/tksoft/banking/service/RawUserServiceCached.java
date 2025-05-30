@@ -58,7 +58,6 @@ public class RawUserServiceCached {
                         RawUserMapper.toDto(entity)));
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
-        //return PageTools.convertListToPage(dtos, PageRequest.of(page, size));
         return PageTools.convertListToPage(dtos, pageable);
     }
 }
