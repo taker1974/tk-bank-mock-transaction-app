@@ -1,8 +1,8 @@
 package ru.spb.tksoft.banking.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,13 +22,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @return Paginated list of UserEntity by user's name%.
      */
     @Query(value = "SELECT u FROM UserEntity u WHERE u.name LIKE :name%")
-    Page<UserEntity> findByNameLike(@Param("name") String name, Pageable pageable);
+    List<UserEntity> findByNameLike(@Param("name") String name);
 
     /**
      * @return Paginated list of UserEntity where user's birth date >= given value.
      */
     @Query(value = "SELECT u FROM UserEntity u WHERE u.dateOfBirth >= :dateOfBirth")
-    Page<UserEntity> findByBirthDateEqualAndAfter(@Param("dateOfBirth") LocalDate dateOfBirth, Pageable pageable);
+    List<UserEntity> findByBirthDateEqualAndAfter(@Param("dateOfBirth") LocalDate dateOfBirth);
 
     /**
      * @return UserEntity by user's exact name.

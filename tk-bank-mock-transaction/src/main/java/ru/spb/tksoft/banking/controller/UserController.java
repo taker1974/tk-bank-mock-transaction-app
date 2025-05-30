@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * User controller for raw user, without relations.
+ * User controller.
  * 
  * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
  */
 @RestController
-@RequestMapping(value = "/raw-user")
-@Tag(name = "Raw user")
+@RequestMapping(value = "/user")
+@Tag(name = "User")
 @RequiredArgsConstructor
-public class RawUserController {
+public class UserController {
 
     @NotNull
     private final RawUserServiceCached rawUserServiceCached;
