@@ -51,12 +51,8 @@ public class RawUserServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        List<RawUserEntity> entities = rawUserRepository.findAll();
-        List<RawUserDto> dtos = new ArrayList<>(entities.size());
-
-        entities.stream().forEach(
-                entity -> dtos.add(
-                        RawUserMapper.toDto(entity)));
+        List<RawUserDto> dtos = rawUserRepository.findAll().stream()
+                .map(RawUserMapper::toDto).toList();
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
         return PageTools.convertListToPage(dtos, pageable);

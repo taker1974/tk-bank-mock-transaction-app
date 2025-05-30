@@ -64,7 +64,7 @@ npx @redocly/cli build-docs <путь-к-openapi-файлу>
 Генерирование статического HTML из Swagger на примере основного приложения tk-recommendations:
 
 ```Bash
-curl http://localhost:8090/tk-recommendations/api-docs -o tk-recommendations-api-spec.json
+curl http://localhost:8092/tk-recommendations/api-docs -o tk-recommendations-api-spec.json
 npx @redocly/cli build-docs tk-recommendations-api-spec.json -o tk-recommendations-swagger.html 
 ```
 
