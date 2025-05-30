@@ -13,8 +13,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import ru.spb.tksoft.banking.entity.cascaded.UserEntity;
-import ru.spb.tksoft.banking.repository.cascaded.UserRepository;
+import ru.spb.tksoft.banking.entity.UserEntity;
+import ru.spb.tksoft.banking.repository.UserRepository;
 import ru.spb.tksoft.utils.log.LogEx;
 
 /**
@@ -38,7 +38,7 @@ public class AuthServiceCached {
     private final UserRepository userRepository;
 
     /** Clear caches. */
-    @CacheEvict(value = "user", allEntries = true)
+    @CacheEvict(value = "token", allEntries = true)
     public void clearCaches() {
         // ...
     }
