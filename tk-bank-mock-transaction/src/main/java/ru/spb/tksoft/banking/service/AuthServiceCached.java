@@ -88,7 +88,7 @@ public class AuthServiceCached {
      * @param user JwtUser object.
      * @return Validity of user.
      */
-    @Cacheable(value = "valid", key = "#user")
+    @Cacheable(value = "valid", key = "#user.userId()")
     @NotNull
     public boolean isValidUser(@NotNull final JwtUser user) {
 

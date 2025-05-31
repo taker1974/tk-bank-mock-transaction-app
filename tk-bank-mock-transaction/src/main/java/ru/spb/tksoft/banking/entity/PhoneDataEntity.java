@@ -1,5 +1,10 @@
 package ru.spb.tksoft.banking.entity;
 
+import java.util.Objects;
+import org.apache.commons.validator.routines.EmailValidator;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,7 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "\"phone_data\"")
-public class PhoneDataEntity {
+public class PhoneDataEntity implements UserContact {
 
     /** Unique ID. */
     @Id
@@ -44,4 +49,55 @@ public class PhoneDataEntity {
     @Size(max = 13)
     @NotBlank
     private String phone;
+
+    /**
+     * Constructor for manual phone creation (adding new phone to the user).
+     */
+    public PhoneDataEntity(UserEntity user, String phone) {
+        this.user = user;
+        setContactValue(phone);
+    }
+
+    /** UserContact implementation: geting contact's ID. */
+    @Override
+    public long getContactId() {
+        return id;
+    }
+
+    private boolean isValidPhone(final String phone) {
+
+        if (phone == null || phone.isBlank()) {
+            return false;
+        }
+
+        var util = PhoneNumberUtil.getInstance();
+        try {
+            Phonenumber.PhoneNumber parsed = util.parse(phone, null);
+            return util.isValidNumber(parsed);
+        } catch (NumberParseException e) {
+            return false;
+        }
+    }
+
+    /** UserContact implementation: setting contact's value. */
+    @Override
+    public void setContactValue(String contactValue) {
+
+        if (!isValidPhone(phone)) {
+            throw new IllegalArgumentException("Phone is invalid");
+        }
+        this.phone = contactValue;
+    }
+
+    /** UserContact implementation: getting contact's value. */
+    @Override
+    public String getContactValue() {
+        return phone;
+    }
+
+    /** Is current contact equal to the other one? */
+    @Override
+    public boolean isContactEqual(UserContact other) {
+        return Objects.equals(phone, other.getContactValue());
+    }
 }

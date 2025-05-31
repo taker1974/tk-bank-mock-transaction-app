@@ -104,7 +104,7 @@ public class UserController {
     public UserDto addEmail(@AuthenticationPrincipal JwtUser user,
             @RequestParam String email) {
 
-        return userServiceCached.findUsersByPhoneExact(email);
+        return userServiceCached.addEmail(user, email);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -114,8 +114,26 @@ public class UserController {
     public UserDto addPhone(@AuthenticationPrincipal JwtUser user,
             @RequestParam String phone) {
 
-        return userServiceCached.findUsersByPhoneExact(phone);
+        return userServiceCached.addPhone(user, phone);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove email from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/remove/email")
+    public UserDto removeEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long emailId) {
 
+        return userServiceCached.removeEmail(user, emailId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove phone from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/remove/phone")
+    public UserDto removePhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long phoneId) {
+
+        return userServiceCached.removePhone(user, phoneId);
+    }
 }
