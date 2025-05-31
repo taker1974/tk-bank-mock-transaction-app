@@ -96,4 +96,26 @@ public class UserController {
 
         return userServiceCached.findUsersByPhoneExact(phone);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add email to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/email")
+    public UserDto addEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String email) {
+
+        return userServiceCached.findUsersByPhoneExact(email);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add phone to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/phone")
+    public UserDto addPhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String phone) {
+
+        return userServiceCached.findUsersByPhoneExact(phone);
+    }
+
+
 }

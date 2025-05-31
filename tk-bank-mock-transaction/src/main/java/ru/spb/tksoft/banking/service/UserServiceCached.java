@@ -1,7 +1,6 @@
 package ru.spb.tksoft.banking.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +120,46 @@ public class UserServiceCached {
     @Cacheable(value = "user", unless = "#result.isEmpty()", key = "#phone")
     @NotNull
     public UserDto findUsersByPhoneExact(final String phone) {
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        UserEntity entity = userRepository.findByPhoneExact(phone)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with given phone not found: " + phone));
+
+        UserDto dto = UserMapper.toDto(entity);
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
+    }
+
+    /**
+     * Add email to user.
+     * 
+     * @return DTO.
+     */
+    @CacheEvict(value = "user", allEntries = true)
+    @NotNull
+    public UserDto addEmail(final String email) {
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        if ()
+
+        UserDto dto = UserMapper.toDto(entity);
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
+    }
+
+    /**
+     * Add phone to user.
+     * 
+     * @return DTO.
+     */
+    @CacheEvict(value = "user", allEntries = true)
+    @NotNull
+    public UserDto addPhone(final String phone) {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
