@@ -1,0 +1,107 @@
+package ru.spb.tksoft.banking.entity;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * User contacts implementation.
+ * 
+ * @author Konstantin Terskikh, kostus.online.1974@yandex.ru, 2025
+ */
+public class UserContactsImpl implements UserContacts {
+
+    @NotNull
+    private final List<UserContact> contacts;
+
+    /**
+     * Constructor.
+     */
+    @SuppressWarnings("unchecked")
+    public UserContactsImpl(List<? extends UserContact> contacts) {
+
+        if (contacts == null) {
+            throw new IllegalArgumentException("Contacts list must not be null");
+        }
+
+        this.contacts = (List<UserContact>) (contacts);
+    }
+
+    /**
+     * Get collection of contacts.
+     * 
+     * @return Collection of contacts or empty list.
+     */
+    @Override
+    @NotNull
+    public List<UserContact> getContacts() {
+        return Collections
+                .unmodifiableList(this.contacts != null ? this.contacts : Collections.emptyList());
+    }
+
+    /**
+     * Add new contact.
+     * 
+     * @param contact New validated contact.
+     * @return True if successful, false if contact with such value already exists.
+     * @throws IllegalArgumentException if contact is null or with same value already exists.
+     */
+    @Override
+    public void addContact(final UserContact contact) {
+
+        if (contact == null) {
+            throw new IllegalArgumentException("Contact object must not be null");
+        }
+
+        if (contacts.stream().anyMatch(c -> c.isContactEqual(contact))) {
+            throw new IllegalArgumentException("Same contact exists");
+        }
+
+        contacts.add(contact);
+    }
+
+    /**
+     * Get contact by id.
+     * 
+     * 
+     * @param contactId Contact ID.
+     * @return UserContact or empty value.
+     */
+    @Override
+    public Optional<UserContact> getContact(long contactId) {
+        return contacts.stream().filter(c -> c.getContactId() == contactId).findFirst();
+    }
+
+    /**
+     * Remove contact by ID.
+     * 
+     * @param contactId Contact ID.
+     * @throws IllegalArgumentException if contact ID not found.
+     */
+    @Override
+    public void removeContact(long contactId) {
+        if (contacts.stream().noneMatch(c -> c.getContactId() == contactId)) {
+            throw new IllegalArgumentException("Contact ID not found");
+        }
+        contacts.removeIf(c -> c.getContactId() == contactId);
+    }
+
+    /**
+     * Update contact.
+     * 
+     * @param contactId UserContact ID.
+     * @param contact Updated validated contact.
+     * @throws IllegalArgumentException if contact ID not found or updated contact with same value
+     *         already exists.
+     */
+    @Override
+    public void updateContact(long contactId, final UserContact contactUpdated) {
+
+        UserContact contact = contacts.stream()
+                .filter(c -> c.getContactId() == contactUpdated.getContactId()).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Contact ID not found"));
+
+        contact.setContactValue(contactUpdated.getContactValue());
+    }
+}

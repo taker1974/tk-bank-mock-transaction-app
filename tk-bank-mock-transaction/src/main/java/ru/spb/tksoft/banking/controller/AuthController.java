@@ -1,6 +1,7 @@
 package ru.spb.tksoft.banking.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.auth.AuthResponseDto;
 import ru.spb.tksoft.banking.dto.auth.LoginRequestDto;
 import ru.spb.tksoft.banking.service.AuthServiceCached;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -36,6 +38,7 @@ public class AuthController {
      * @param request login credentials.
      * @return Generated JWT token.
      */
+    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Authentication",
             description = "Getting JWT token by email and password",
@@ -51,7 +54,8 @@ public class AuthController {
 
         String token = authServiceCached
                 .getJwtToken(request.getEmail(), request.getPassword())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Invalid credentials"));
 
         return new AuthResponseDto(token);
     }

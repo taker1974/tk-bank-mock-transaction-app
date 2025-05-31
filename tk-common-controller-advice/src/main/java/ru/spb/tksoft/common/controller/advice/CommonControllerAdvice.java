@@ -1,5 +1,7 @@
 package ru.spb.tksoft.common.controller.advice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -7,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.spb.tksoft.common.controller.dto.CommonErrorResponseDto;
+import ru.spb.tksoft.utils.log.LogEx;
 import java.util.Arrays;
 
 /**
@@ -17,6 +20,8 @@ import java.util.Arrays;
 @ControllerAdvice
 @Order()
 public class CommonControllerAdvice extends AbstractBaseControllerAdvice {
+
+    private static final Logger log = LoggerFactory.getLogger(CommonControllerAdvice.class);
 
     /** Default error code. */
     public static final int E_CODE = 160;
@@ -37,6 +42,10 @@ public class CommonControllerAdvice extends AbstractBaseControllerAdvice {
     @ExceptionHandler(Exception.class)
     @Order()
     public ResponseEntity<CommonErrorResponseDto> handleException(Exception e) {
+
+        LogEx.error(log, LogEx.getThisMethodName(), LogEx.EXCEPTION_THROWN, E_CODE,
+                e.getMessage());
+
         return new ResponseEntity<>(
                 new CommonErrorResponseDto(E_CODE, e.getMessage(),
                         Arrays.toString(e.getStackTrace())),
@@ -55,6 +64,10 @@ public class CommonControllerAdvice extends AbstractBaseControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     @Order(Ordered.LOWEST_PRECEDENCE - 1)
     public ResponseEntity<CommonErrorResponseDto> handleRuntimeException(RuntimeException e) {
+
+        LogEx.error(log, LogEx.getThisMethodName(), LogEx.EXCEPTION_THROWN, RTE_CODE,
+                e.getMessage());
+
         return new ResponseEntity<>(
                 new CommonErrorResponseDto(RTE_CODE, e.getMessage(),
                         Arrays.toString(e.getStackTrace())),
@@ -73,6 +86,10 @@ public class CommonControllerAdvice extends AbstractBaseControllerAdvice {
     @ExceptionHandler(NullPointerException.class)
     @Order(Ordered.LOWEST_PRECEDENCE - 2)
     public ResponseEntity<CommonErrorResponseDto> handleNpe(NullPointerException e) {
+
+        LogEx.error(log, LogEx.getThisMethodName(), LogEx.EXCEPTION_THROWN, NPE_CODE,
+                e.getMessage());
+
         return new ResponseEntity<>(
                 new CommonErrorResponseDto(NPE_CODE, e.getMessage(),
                         Arrays.toString(e.getStackTrace())),
@@ -91,6 +108,10 @@ public class CommonControllerAdvice extends AbstractBaseControllerAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @Order(Ordered.LOWEST_PRECEDENCE - 3)
     public ResponseEntity<CommonErrorResponseDto> handleIAE(IllegalArgumentException e) {
+
+        LogEx.error(log, LogEx.getThisMethodName(), LogEx.EXCEPTION_THROWN, IAE_CODE,
+                e.getMessage());
+
         return new ResponseEntity<>(
                 new CommonErrorResponseDto(IAE_CODE, e.getMessage(),
                         Arrays.toString(e.getStackTrace())),

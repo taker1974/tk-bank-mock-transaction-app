@@ -1,6 +1,7 @@
 package ru.spb.tksoft.banking.entity;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -64,4 +66,38 @@ public class UserEntity {
     /** Phones. */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PhoneDataEntity> phones;
+
+    @Transient
+    private UserContacts emailContacts;
+
+    @Transient
+    private UserContacts phoneContacts;
+
+    /**
+     * Get email contacts as UserContacts.
+     * 
+     * @return email contacts.
+     * @see UserContactsImpl
+     */
+    public UserContacts getEmailContacts() {
+        if (emailContacts == null) {
+            emailContacts = new UserContactsImpl(
+                    emails != null ? emails : Collections.emptyList());
+        }
+        return emailContacts;
+    }
+
+    /**
+     * Get phone contacts as UserContacts.
+     * 
+     * @return phone contacts.
+     * @see UserContactsImpl
+     */
+    public UserContacts getPhoneContacts() {
+        if (phoneContacts == null) {
+            phoneContacts = new UserContactsImpl(
+                    phones != null ? phones : Collections.emptyList());
+        }
+        return phoneContacts;
+    }
 }

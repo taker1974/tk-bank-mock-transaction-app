@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import ru.spb.tksoft.banking.controller.JwtUser;
 import ru.spb.tksoft.banking.entity.UserEntity;
 import ru.spb.tksoft.banking.repository.UserRepository;
 import ru.spb.tksoft.utils.log.LogEx;
@@ -82,21 +83,21 @@ public class AuthServiceCached {
     }
 
     /**
-     * Check if user with given email is valid (just exists).
+     * Check if user with given credentials is valid (just exists).
      * 
-     * @param email Email.
+     * @param user JwtUser object.
      * @return Validity of user.
      */
-    @Cacheable(value = "valid", key = "#email")
+    @Cacheable(value = "valid", key = "#user.userId()")
     @NotNull
-    public boolean isValidUser(@NotNull final String email) {
+    public boolean isValidUser(@NotNull final JwtUser user) {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        boolean valid = userRepository.findByEMailExact(email).isPresent();
+        boolean valid = userRepository.findById(user.userId()).isPresent();
         if (!valid) {
             LogEx.warn(log, LogEx.getThisMethodName(),
-                    "user with given email is invalid: " + email);
+                    "user with given credentials is invalid: " + user.email());
         }
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);

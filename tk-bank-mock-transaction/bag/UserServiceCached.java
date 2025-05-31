@@ -2,6 +2,8 @@ package ru.spb.tksoft.banking.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -9,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +24,7 @@ import ru.spb.tksoft.banking.repository.UserRepository;
 import ru.spb.tksoft.banking.tools.PageTools;
 import ru.spb.tksoft.utils.log.LogEx;
 import ru.spb.tksoft.banking.entity.EmailDataEntity;
-import ru.spb.tksoft.banking.entity.UserContact;
-import ru.spb.tksoft.banking.entity.UserContacts;
+import ru.spb.tksoft.banking.entity.PhoneDataEntity;
 import ru.spb.tksoft.banking.entity.UserEntity;
 
 /**
@@ -140,27 +144,6 @@ public class UserServiceCached {
         return dto;
     }
 
-    private UserEntity getUserById(final long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User with given id not found: " + userId));
-    }
-
-    @CacheEvict(value = "user", allEntries = true)
-    @NotNull
-    private UserDto addContact(final JwtUser user,
-            final UserContacts contacts, final UserContact contact) {
-
-        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
-
-        UserEntity userEntity = getUserById(user.userId());
-        contacts.addContact(contact);
-        UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
-
-        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
-        return dto;
-    }
-
     /**
      * Add email to user.
      * 
@@ -169,10 +152,28 @@ public class UserServiceCached {
     @CacheEvict(value = "user", allEntries = true)
     @NotNull
     public UserDto addEmail(final JwtUser user, final String email) {
-        UserEntity userEntity = getUserById(user.userId());
-        return addContact(user,
-                userEntity.getEmailContacts(), new EmailDataEntity(userEntity, email));
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        UserEntity userEntity = userRepository.findById(user.userId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with given credentials not found: " + user.email()));
+
+        if (!isValidEMail(email)) {
+            throw new IllegalArgumentException("Email is invalid: " + email);
+        }
+
+        if (userEntity.getEmails().stream().anyMatch(e -> e.getEmail().equals(email))) {
+            throw new IllegalArgumentException("Email exists: " + email);
+        }
+
+        userEntity.getEmails().add(new EmailDataEntity(userEntity, email));
+        UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
     }
+
 
     /**
      * Add phone to user.
@@ -182,20 +183,19 @@ public class UserServiceCached {
     @CacheEvict(value = "user", allEntries = true)
     @NotNull
     public UserDto addPhone(final JwtUser user, final String phone) {
-        UserEntity userEntity = getUserById(user.userId());
-        return addContact(user,
-                userEntity.getPhoneContacts(), new EmailDataEntity(userEntity, phone));
-    }
-
-    @CacheEvict(value = "user", allEntries = true)
-    @NotNull
-    private UserDto removeContact(final JwtUser user,
-            final UserContacts contacts, final long contactId) {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        UserEntity userEntity = getUserById(user.userId());
-        contacts.removeContact(contactId);
+        UserEntity userEntity = userRepository.findById(user.userId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with given credentials not found: " + user.email()));
+
+
+        if (userEntity.getPhones().stream().anyMatch(e -> e.getPhone().equals(phone))) {
+            throw new IllegalArgumentException("Phone exists: " + phone);
+        }
+
+        userEntity.getPhones().add(new PhoneDataEntity(userEntity, phone));
         UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
@@ -210,9 +210,27 @@ public class UserServiceCached {
     @CacheEvict(value = "user", allEntries = true)
     @NotNull
     public UserDto removeEmail(final JwtUser user, final long emailId) {
-        UserEntity userEntity = getUserById(user.userId());
-        return removeContact(user,
-                userEntity.getEmailContacts(), emailId);
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        UserEntity userEntity = userRepository.findById(user.userId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with given credentials not found: " + user.email()));
+
+        if (userEntity.getEmails().size() <= 1) {
+            throw new IllegalArgumentException("Cannot remove the only phone number");
+        }
+
+        EmailDataEntity emailEntity = userEntity.getEmails().stream()
+                .filter(e -> e.getId().equals(emailId)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Email with given ID not exists: " + emailId));
+
+        userEntity.getEmails().remove(emailEntity);
+        UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
     }
 
     /**
@@ -223,8 +241,26 @@ public class UserServiceCached {
     @CacheEvict(value = "user", allEntries = true)
     @NotNull
     public UserDto removePhone(final JwtUser user, final long phoneId) {
-        UserEntity userEntity = getUserById(user.userId());
-        return removeContact(user,
-                userEntity.getPhoneContacts(), phoneId);
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        UserEntity userEntity = userRepository.findById(user.userId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with given credentials not found: " + user.email()));
+
+        if (userEntity.getPhones().size() <= 1) {
+            throw new IllegalArgumentException("Cannot remove the only phone number");
+        }
+
+        EmailDataEntity emailEntity = userEntity.getEmails().stream()
+                .filter(e -> e.getId().equals(emailId)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Email with given ID not exists: " + emailId));
+
+        userEntity.getEmails().remove(emailEntity);
+        UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
     }
 }

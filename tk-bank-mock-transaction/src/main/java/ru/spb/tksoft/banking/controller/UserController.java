@@ -96,4 +96,44 @@ public class UserController {
 
         return userServiceCached.findUsersByPhoneExact(phone);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add email to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/email")
+    public UserDto addEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String email) {
+
+        return userServiceCached.addEmail(user, email);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add phone to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/phone")
+    public UserDto addPhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String phone) {
+
+        return userServiceCached.addPhone(user, phone);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove email from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/remove/email")
+    public UserDto removeEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long emailId) {
+
+        return userServiceCached.removeEmail(user, emailId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove phone from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/remove/phone")
+    public UserDto removePhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long phoneId) {
+
+        return userServiceCached.removePhone(user, phoneId);
+    }
 }
