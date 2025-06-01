@@ -227,4 +227,49 @@ public class UserServiceCached {
         return removeContact(user,
                 userEntity.getPhoneContacts(), phoneId);
     }
+
+    @CacheEvict(value = "user", allEntries = true)
+    @NotNull
+    private UserDto updateContact(final JwtUser user,
+            final UserContacts contacts, final UserContact contactUpdated) {
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
+
+        UserEntity userEntity = getUserById(user.userId());
+        contacts.updateContact(contactUpdated);
+        UserDto dto = UserMapper.toDto(userRepository.save(userEntity));
+
+        LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);
+        return dto;
+    }
+
+    /**
+     * Update email.
+     * 
+     * @return DTO.
+     */
+    @CacheEvict(value = "user", allEntries = true)
+    @NotNull
+    public UserDto updateEmail(final JwtUser user,
+            final long emailId, final String newEmail) {
+
+        UserEntity userEntity = getUserById(user.userId());
+        return updateContact(user,
+                userEntity.getEmailContacts(), new EmailDataEntity(userEntity, newEmail));
+    }
+
+    /**
+     * Update phone.
+     * 
+     * @return DTO.
+     */
+    @CacheEvict(value = "user", allEntries = true)
+    @NotNull
+    public UserDto updatePhone(final JwtUser user,
+            final long phoneId, final String newPhone) {
+
+        UserEntity userEntity = getUserById(user.userId());
+        return updateContact(user,
+                userEntity.getPhoneContacts(), new EmailDataEntity(userEntity, newPhone));
+    }
 }

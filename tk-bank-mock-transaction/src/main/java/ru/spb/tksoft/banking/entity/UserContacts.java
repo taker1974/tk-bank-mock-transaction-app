@@ -23,5 +23,5 @@ public interface UserContacts {
     void removeContact(long contactId);
 
     /** Update contact. */
-    void updateContact(long contactId, UserContact contact);
+    void updateContact(UserContact contact);
 }

@@ -136,4 +136,24 @@ public class UserController {
 
         return userServiceCached.removePhone(user, phoneId);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update email",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/update/email")
+    public UserDto updateEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long emailId, @RequestParam String newEmail) {
+
+        return userServiceCached.updateEmail(user, emailId, newEmail);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update phone",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/update/phone")
+    public UserDto updatePhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam long phoneId, @RequestParam String newPhone) {
+
+        return userServiceCached.updatePhone(user, phoneId, newPhone);
+    }
 }
