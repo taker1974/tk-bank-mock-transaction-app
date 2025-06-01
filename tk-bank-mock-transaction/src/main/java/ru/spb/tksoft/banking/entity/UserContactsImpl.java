@@ -51,7 +51,6 @@ public class UserContactsImpl implements UserContacts {
      * Add new contact.
      * 
      * @param contact New validated contact.
-     * @return True if successful, false if contact with such value already exists.
      * @throws IllegalArgumentException if contact is null or with same value already exists.
      */
     @Override
@@ -103,8 +102,7 @@ public class UserContactsImpl implements UserContacts {
     /**
      * Update contact.
      * 
-     * @param contactId UserContact ID.
-     * @param contact Updated validated contact.
+     * @param contactUpdated Updated validated contact.
      * @throws IllegalArgumentException if contact ID not found or updated contact with same value
      *         already exists.
      */
