@@ -15,6 +15,13 @@ public class UserContactsImpl implements UserContacts {
     @NotNull
     private final List<UserContact> contacts;
 
+    private void checkNotNull(UserContact contact) {
+
+        if (contact == null) {
+            throw new IllegalArgumentException("Contact object must not be null");
+        }
+    }
+
     /**
      * Constructor.
      */
@@ -50,10 +57,7 @@ public class UserContactsImpl implements UserContacts {
     @Override
     public void addContact(final UserContact contact) {
 
-        if (contact == null) {
-            throw new IllegalArgumentException("Contact object must not be null");
-        }
-
+        checkNotNull(contact);
         if (contacts.stream().anyMatch(c -> c.isContactEqual(contact))) {
             throw new IllegalArgumentException("Same contact exists");
         }
@@ -70,7 +74,8 @@ public class UserContactsImpl implements UserContacts {
      */
     @Override
     public Optional<UserContact> getContact(long contactId) {
-        return contacts.stream().filter(c -> c.getContactId() == contactId).findFirst();
+        return contacts.stream()
+                .filter(c -> c.getContactId() == contactId).findFirst();
     }
 
     /**
@@ -81,11 +86,19 @@ public class UserContactsImpl implements UserContacts {
      */
     @Override
     public void removeContact(long contactId) {
+
         if (contacts.stream().noneMatch(c -> c.getContactId() == contactId)) {
             throw new IllegalArgumentException("Contact ID not found");
         }
         contacts.removeIf(c -> c.getContactId() == contactId);
     }
+
+    private UserContact getContactById(long contactId) {
+        return contacts.stream()
+                .filter(c -> c.getContactId() == contactId).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Contact ID not found"));
+    }
+
 
     /**
      * Update contact.
@@ -96,11 +109,10 @@ public class UserContactsImpl implements UserContacts {
      *         already exists.
      */
     @Override
-    public void updateContact(long contactId, final UserContact contactUpdated) {
+    public void updateContact(final UserContact contactUpdated) {
 
-        UserContact contact = contacts.stream()
-                .filter(c -> c.getContactId() == contactUpdated.getContactId()).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Contact ID not found"));
+        checkNotNull(contactUpdated);
+        UserContact contact = getContactById(contactUpdated.getContactId());
 
         contact.setContactValue(contactUpdated.getContactValue());
     }
