@@ -1,19 +1,16 @@
 package ru.spb.tksoft.banking.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.RawUserDto;
-import ru.spb.tksoft.banking.entity.RawUserEntity;
 import ru.spb.tksoft.banking.mapper.RawUserMapper;
 import ru.spb.tksoft.banking.repository.RawUserRepository;
 import ru.spb.tksoft.banking.tools.PageTools;

@@ -1,7 +1,6 @@
 package ru.spb.tksoft.banking.entity;
 
 import java.util.Objects;
-import org.apache.commons.validator.routines.EmailValidator;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
