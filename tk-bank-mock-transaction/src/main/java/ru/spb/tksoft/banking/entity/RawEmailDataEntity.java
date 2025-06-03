@@ -1,5 +1,7 @@
 package ru.spb.tksoft.banking.entity;
 
+import java.util.Objects;
+import org.apache.commons.validator.routines.EmailValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "\"email_data\"")
-public class RawEmailDataEntity {
+public class RawEmailDataEntity  implements UserContact {
 
     /** Unique ID. */
     @Id
@@ -44,4 +46,46 @@ public class RawEmailDataEntity {
     @NotBlank
     @Email
     private String email;
+
+    /**
+     * Constructor for manual email creation (adding new email to the user).
+     */
+    public RawEmailDataEntity(final long userId, final String email) {
+        this.userId = userId;
+        setContactValue(email);
+    }
+
+    /** UserContact implementation: geting contact's ID. */
+    @Override
+    public long getContactId() {
+        return id;
+    }
+
+    private boolean isValidEMail(final String email) {
+
+        return email != null && !email.isBlank() &&
+                EmailValidator.getInstance().isValid(email);
+    }
+
+    /** UserContact implementation: setting contact's value. */
+    @Override
+    public void setContactValue(String contactValue) {
+
+        if (!isValidEMail(email)) {
+            throw new IllegalArgumentException("Email is invalid");
+        }
+        this.email = contactValue;
+    }
+
+    /** UserContact implementation: getting contact's value. */
+    @Override
+    public String getContactValue() {
+        return email;
+    }
+
+    /** Is current contact equal to the other one? */
+    @Override
+    public boolean isContactEqual(UserContact other) {
+        return Objects.equals(email, other.getContactValue());
+    }
 }

@@ -24,8 +24,9 @@ spring:
 
   cache:
     type: caffeine
+    #cache-names: userById
     caffeine:
-      spec: maximumSize=50,expireAfterWrite=30m
+      spec: maximumSize=500, expireAfterWrite=10m
 
   datasource:
     # CREATE DATABASE tk_bank;

@@ -8,8 +8,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import ru.spb.tksoft.banking.dto.RawContactItemDto;
 import ru.spb.tksoft.banking.dto.RawUserDto;
+import ru.spb.tksoft.banking.dto.UserDto;
+import ru.spb.tksoft.banking.service.RawUserService;
 import ru.spb.tksoft.banking.service.RawUserServiceCached;
+import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +34,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class RawUserController {
 
     @NotNull
+    private final RawUserService rawUserService;
+
+    @NotNull
     private final RawUserServiceCached rawUserServiceCached;
 
     @ResponseStatus(HttpStatus.OK)
@@ -41,6 +48,76 @@ public class RawUserController {
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return rawUserServiceCached.getAllUsers(pageable);
+        return rawUserService.getAllUsers(pageable);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Search users by name% pattern",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/search/name")
+    public Page<RawUserDto> findUsersByNameLike(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String namePrefix,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return rawUserService.findUsersByNameLike(namePrefix, pageable);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Search users by date of birth equal and after",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/search/age")
+    public Page<RawUserDto> findUsersByDateOfBirth(@AuthenticationPrincipal JwtUser user,
+            @RequestParam(defaultValue = "1900") int year,
+            @RequestParam(defaultValue = "1") int month,
+            @RequestParam(defaultValue = "1") int day,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        LocalDate dateOfBirth = LocalDate.of(year, month, day);
+        Pageable pageable = PageRequest.of(page, size);
+        return rawUserService.findUsersByDateOfBirth(dateOfBirth, pageable);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Search user by email exact",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/search/email")
+    public RawUserDto findUsersByEmailExact(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String email) {
+
+        return rawUserServiceCached.findUserByEmailExact(email);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Search user by phone exact",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/search/phone")
+    public RawUserDto findUsersByPhoneExact(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String phone) {
+
+        return rawUserServiceCached.findUserByPhoneExact(phone);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add email to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/email")
+    public RawContactItemDto addEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String email) {
+
+        return rawUserServiceCached.addEmail(user, email);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Add phone to user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/add/phone")
+    public RawContactItemDto addPhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam String phone) {
+
+        return rawUserServiceCached.addPhone(user, phone);
+    }
+
 }

@@ -1,10 +1,11 @@
 package ru.spb.tksoft.banking.repository;
 
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.spb.tksoft.banking.entity.RawEmailDataEntity;
 
@@ -20,5 +21,19 @@ public interface RawEmailDataRepository extends JpaRepository<RawEmailDataEntity
      * @return Paginated list of RawEmailDataEntity by userId.
      */
     @Query(value = "SELECT d FROM RawEmailDataEntity d WHERE d.userId = :userId")
-    Page<RawEmailDataEntity> findByUserId(@Param("userId") long userId, Pageable pageable);
+    Page<RawEmailDataEntity> findByUserId(long userId, Pageable pageable);
+
+    /**
+     * @return Set of RawEmailDataEntity by userId.
+     */
+    @Query(nativeQuery = true, value =
+            "SELECT * FROM \"email_data\" d WHERE d.user_id = :userId")
+    Set<RawEmailDataEntity> findByUserId(long userId);
+
+    /**
+     * @return RawEmailDataEntity.
+     */
+    @Query(nativeQuery = true, value =
+            "SELECT * FROM \"email_data\" d WHERE d.email = :email")
+    Optional<RawEmailDataEntity> findEmailExact(String email);
 }
