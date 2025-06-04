@@ -14,8 +14,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.controller.JwtUser;
-import ru.spb.tksoft.banking.entity.UserEntity;
-import ru.spb.tksoft.banking.repository.UserRepository;
+import ru.spb.tksoft.banking.entity.RawUserEntity;
+import ru.spb.tksoft.banking.repository.RawUserRepository;
 import ru.spb.tksoft.utils.log.LogEx;
 
 /**
@@ -36,7 +36,7 @@ public class AuthServiceCached {
     private static final long EXPIRATION_TIME_MS = 86_400_000; // 24 hours
 
     @NotNull
-    private final UserRepository userRepository;
+    private final RawUserRepository rawRserRepository;
 
     /** Clear caches. */
     @CacheEvict(value = "token", allEntries = true)
@@ -57,16 +57,16 @@ public class AuthServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        Optional<UserEntity> userOptional = userRepository.findByEMailExact(email);
+        Optional<RawUserEntity> userOptional = rawRserRepository.findOneByEmailExact(email);
         if (userOptional.isEmpty()) {
-            LogEx.trace(log, LogEx.getThisMethodName(), "user not found");
+            LogEx.trace(log, LogEx.getThisMethodName(), "User not found");
             return Optional.empty();
         }
 
-        UserEntity user = userOptional.get();
+        RawUserEntity user = userOptional.get();
 
         if (!Objects.equals(password, user.getPassword())) {
-            LogEx.trace(log, LogEx.getThisMethodName(), "wrong password");
+            LogEx.trace(log, LogEx.getThisMethodName(), "Wrong password");
             return Optional.empty();
         }
 
@@ -94,10 +94,10 @@ public class AuthServiceCached {
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STARTING);
 
-        boolean valid = userRepository.findById(user.userId()).isPresent();
+        boolean valid = rawRserRepository.findById(user.userId()).isPresent();
         if (!valid) {
             LogEx.warn(log, LogEx.getThisMethodName(),
-                    "user with given credentials is invalid: " + user.email());
+                    "User with given credentials is invalid");
         }
 
         LogEx.trace(log, LogEx.getThisMethodName(), LogEx.STOPPING);

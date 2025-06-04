@@ -1,7 +1,7 @@
 package ru.spb.tksoft.banking.entity;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Contacts.
@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface UserContacts {
 
     /** Get collection of contacts. */
-    List<UserContact> getContacts();
+    Set<UserContact> getContacts();
 
     /** Add new contact. */
     void addContact(UserContact contact);

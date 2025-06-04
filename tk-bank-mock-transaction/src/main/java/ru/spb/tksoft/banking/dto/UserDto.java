@@ -3,7 +3,7 @@ package ru.spb.tksoft.banking.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.NotBlank;
@@ -54,11 +54,11 @@ public class UserDto {
     @NotNull
     private BigDecimal balance;
 
-    /** EMail list. */
+    /** EMail set. */
     @NotNull
-    private List<String> emails;
+    private Set<String> emails;
 
-    /** Phone list. */
+    /** Phone set. */
     @NotNull
-    private List<String> phones;
+    private Set<String> phones;
 }

@@ -12,6 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class TkTargetedAdvertisingApplicationTests {
 
+	// Anton@gmail.com
+	// {
+	//   "token": "eyJhbGciOiJIUzI1NiJ9.eyJVU0VSX0lEIjo1LCJzdWIiOiJBbnRvbkBnbWFpbC5jb20iLCJpYXQiOjE3NDg3NjM5NzQsImV4cCI6MTc0ODg1MDM3NH0.GiBgiCXsYkWpqoveR0U3viX2kXfDktjQBvRlSZ3ke7Y"
+	// }
+
 	/**
 	 * Context load.
 	 */

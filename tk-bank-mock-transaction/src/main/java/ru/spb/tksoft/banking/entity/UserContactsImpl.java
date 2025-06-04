@@ -1,8 +1,8 @@
 package ru.spb.tksoft.banking.entity;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 public class UserContactsImpl implements UserContacts {
 
     @NotNull
-    private final List<UserContact> contacts;
+    private final Set<UserContact> contacts;
 
     private void checkNotNull(UserContact contact) {
 
@@ -26,13 +26,13 @@ public class UserContactsImpl implements UserContacts {
      * Constructor.
      */
     @SuppressWarnings("unchecked")
-    public UserContactsImpl(List<? extends UserContact> contacts) {
+    public UserContactsImpl(Set<? extends UserContact> contacts) {
 
         if (contacts == null) {
-            throw new IllegalArgumentException("Contacts list must not be null");
+            throw new IllegalArgumentException("Contacts set must not be null");
         }
 
-        this.contacts = (List<UserContact>) (contacts);
+        this.contacts = (Set<UserContact>) (contacts);
     }
 
     /**
@@ -42,9 +42,9 @@ public class UserContactsImpl implements UserContacts {
      */
     @Override
     @NotNull
-    public List<UserContact> getContacts() {
+    public Set<UserContact> getContacts() {
         return Collections
-                .unmodifiableList(this.contacts != null ? this.contacts : Collections.emptyList());
+                .unmodifiableSet(this.contacts != null ? this.contacts : Collections.emptySet());
     }
 
     /**
