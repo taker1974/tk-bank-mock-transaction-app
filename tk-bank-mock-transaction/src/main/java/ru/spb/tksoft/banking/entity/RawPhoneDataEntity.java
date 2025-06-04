@@ -80,7 +80,7 @@ public class RawPhoneDataEntity implements UserContact {
     @Override
     public void setContactValue(String contactValue) {
 
-        if (!isValidPhone(phone)) {
+        if (!isValidPhone(contactValue)) {
             throw new IllegalArgumentException("Phone is invalid");
         }
         this.phone = contactValue;

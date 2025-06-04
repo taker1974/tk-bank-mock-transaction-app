@@ -71,7 +71,7 @@ public class RawEmailDataEntity  implements UserContact {
     @Override
     public void setContactValue(String contactValue) {
 
-        if (!isValidEMail(email)) {
+        if (!isValidEMail(contactValue)) {
             throw new IllegalArgumentException("Email is invalid");
         }
         this.email = contactValue;

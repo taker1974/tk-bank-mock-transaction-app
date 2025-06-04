@@ -27,8 +27,8 @@ public final class UserMapper {
      * 
      * @param userEntity User entity.
      * @param accountEntity Account entity.
-     * @param emailDataEntity Email data entity.
-     * @param phoneDataEntity Phone data entity.
+     * @param emailDataEntities Email entities.
+     * @param phoneDataEntities Phone entities.
      * @return user DTO.
      */
     @NotNull

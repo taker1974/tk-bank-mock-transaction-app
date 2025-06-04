@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.ThreadSafe;
 import io.jsonwebtoken.lang.Collections;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import ru.spb.tksoft.banking.dto.RawContactItemDto;
 import ru.spb.tksoft.banking.dto.RawContactListDto;
@@ -40,6 +41,9 @@ public final class RawUserMapper {
     /** E-Mails title. */
     public static final String TITLE_EMAILS = "E-mails";
 
+    /** E-Mails title. */
+    public static final String TITLE_PHONES = "Phones";
+
     /**
      * Set of UserContact to DTO.
      *
@@ -47,14 +51,14 @@ public final class RawUserMapper {
      * @return DTO.
      */
     @NotNull
-    public static RawContactListDto toDto(@NotNull final long userId,
-            @NotNull final Set<UserContact> entities) {
+    public static RawContactListDto toDto(@NotBlank final String title,
+            @NotNull final long userId, @NotNull final Set<UserContact> entities) {
 
         if (entities.isEmpty()) {
-            return new RawContactListDto(TITLE_EMAILS, userId, Collections.emptySet());
+            return new RawContactListDto(title, userId, Collections.emptySet());
         }
 
-        return new RawContactListDto(TITLE_EMAILS, userId,
+        return new RawContactListDto(title, userId,
                 entities.stream()
                         .map(e -> new RawContactItemDto(e.getContactId(), e.getContactValue()))
                         .collect(Collectors.toSet()));

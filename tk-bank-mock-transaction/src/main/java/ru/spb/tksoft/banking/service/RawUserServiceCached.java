@@ -1,22 +1,15 @@
 package ru.spb.tksoft.banking.service;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.lang.Collections;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -24,19 +17,17 @@ import ru.spb.tksoft.banking.controller.JwtUser;
 import ru.spb.tksoft.banking.dto.RawContactItemDto;
 import ru.spb.tksoft.banking.dto.RawContactListDto;
 import ru.spb.tksoft.banking.dto.RawUserDto;
-import ru.spb.tksoft.banking.dto.UserDto;
 import ru.spb.tksoft.banking.entity.RawEmailDataEntity;
 import ru.spb.tksoft.banking.entity.RawPhoneDataEntity;
 import ru.spb.tksoft.banking.entity.RawUserEntity;
 import ru.spb.tksoft.banking.entity.UserContact;
-import ru.spb.tksoft.banking.entity.UserContacts;
 import ru.spb.tksoft.banking.exception.AlreadyExistsException;
+import ru.spb.tksoft.banking.exception.LastObjectException;
+import ru.spb.tksoft.banking.exception.ObjectNotOwnedException;
 import ru.spb.tksoft.banking.mapper.RawUserMapper;
-import ru.spb.tksoft.banking.mapper.UserMapper;
 import ru.spb.tksoft.banking.repository.RawEmailDataRepository;
 import ru.spb.tksoft.banking.repository.RawPhoneDataRepository;
 import ru.spb.tksoft.banking.repository.RawUserRepository;
-import ru.spb.tksoft.banking.tools.PageTools;
 import ru.spb.tksoft.utils.log.LogEx;
 
 /**
@@ -124,26 +115,6 @@ public class RawUserServiceCached {
         return dto;
     }
 
-    private RawUserEntity getUserById(final long userId) {
-
-        var cache = cacheManager.getCache("userById");
-        if (cache != null) {
-            ValueWrapper value = cache.get(userId);
-            if (value != null) {
-                return (RawUserEntity) value.get();
-            }
-        }
-
-        RawUserEntity result = rawUserRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User with given id not found"));
-
-        if (cache != null) {
-            cache.put(userId, result);
-        }
-        return result;
-    }
-
     /**
      * Get all emails for given user.
      * 
@@ -159,7 +130,7 @@ public class RawUserServiceCached {
         Set<UserContact> emails = rawEmailDataRepository.findByUserId(userId)
                 .stream().collect(Collectors.toSet());
 
-        return RawUserMapper.toDto(userId, emails);
+        return RawUserMapper.toDto(RawUserMapper.TITLE_EMAILS, userId, emails);
     }
 
     /**
@@ -177,7 +148,7 @@ public class RawUserServiceCached {
         Set<UserContact> phones = rawPhoneDataRepository.findByUserId(userId)
                 .stream().collect(Collectors.toSet());
 
-        return RawUserMapper.toDto(userId, phones);
+        return RawUserMapper.toDto(RawUserMapper.TITLE_PHONES, userId, phones);
     }
 
     /**
@@ -216,5 +187,93 @@ public class RawUserServiceCached {
 
         var newPhone = new RawPhoneDataEntity(userId, phone);
         return RawUserMapper.toDto(rawPhoneDataRepository.save(newPhone));
+    }
+
+    /**
+     * Remove email from user.
+     * 
+     */
+    @CacheEvict(value = "userEmails", allEntries = true)
+    @NotNull
+    public void removeEmail(final JwtUser user, final long emailId) {
+
+        long userId = user.userId();
+        RawEmailDataEntity entity = rawEmailDataRepository.findById(emailId)
+                .orElseThrow(() -> new EntityNotFoundException("Email not found"));
+
+        if (entity.getUserId() != userId) {
+            throw new ObjectNotOwnedException("Email does not belong to user");
+        }
+
+        if (rawEmailDataRepository.countContacts(userId) <= 1) {
+            throw new LastObjectException("Can't delete the last email");
+        }
+
+        rawEmailDataRepository.delete(entity);
+    }
+
+    /**
+     * Remove phone from user.
+     * 
+     */
+    @CacheEvict(value = "userPhones", allEntries = true)
+    @NotNull
+    public void removePhone(final JwtUser user, final long phoneId) {
+
+        long userId = user.userId();
+        RawPhoneDataEntity entity = rawPhoneDataRepository.findById(phoneId)
+                .orElseThrow(() -> new EntityNotFoundException("Phone not found"));
+
+        if (rawEmailDataRepository.countContacts(userId) <= 1) {
+            throw new LastObjectException("Can't delete the last email");
+        }
+
+        if (entity.getUserId() != userId) {
+            throw new ObjectNotOwnedException("Phone does not belong to user");
+        }
+
+        rawPhoneDataRepository.delete(entity);
+    }
+
+    /**
+     * Update user's email.
+     * 
+     */
+    @CacheEvict(value = "userEmails", allEntries = true)
+    @NotNull
+    public RawContactItemDto updateEmail(final JwtUser user, final long emailId,
+            final String newEmail) {
+
+        long userId = user.userId();
+        RawEmailDataEntity entity = rawEmailDataRepository.findById(emailId)
+                .orElseThrow(() -> new EntityNotFoundException("Email not found"));
+
+        if (entity.getUserId() != userId) {
+            throw new ObjectNotOwnedException("Email does not belong to user");
+        }
+
+        entity.setContactValue(newEmail);
+        return RawUserMapper.toDto(rawEmailDataRepository.save(entity));
+    }
+
+    /**
+     * Update user's phone.
+     * 
+     */
+    @CacheEvict(value = "userPhones", allEntries = true)
+    @NotNull
+    public RawContactItemDto updatePhone(final JwtUser user, final long phoneId,
+            final String newPhone) {
+
+        long userId = user.userId();
+        RawPhoneDataEntity entity = rawPhoneDataRepository.findById(phoneId)
+                .orElseThrow(() -> new EntityNotFoundException("Phone not found"));
+
+        if (entity.getUserId() != userId) {
+            throw new ObjectNotOwnedException("Phone does not belong to user");
+        }
+
+        entity.setContactValue(newPhone);
+        return RawUserMapper.toDto(rawPhoneDataRepository.save(entity));
     }
 }

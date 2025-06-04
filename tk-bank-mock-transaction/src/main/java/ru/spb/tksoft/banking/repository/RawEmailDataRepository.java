@@ -18,12 +18,6 @@ import ru.spb.tksoft.banking.entity.RawEmailDataEntity;
 public interface RawEmailDataRepository extends JpaRepository<RawEmailDataEntity, Long> {
 
     /**
-     * @return Paginated list of RawEmailDataEntity by userId.
-     */
-    @Query(value = "SELECT d FROM RawEmailDataEntity d WHERE d.userId = :userId")
-    Page<RawEmailDataEntity> findByUserId(long userId, Pageable pageable);
-
-    /**
      * @return Set of RawEmailDataEntity by userId.
      */
     @Query(nativeQuery = true, value =
@@ -36,4 +30,11 @@ public interface RawEmailDataRepository extends JpaRepository<RawEmailDataEntity
     @Query(nativeQuery = true, value =
             "SELECT * FROM \"email_data\" d WHERE d.email = :email")
     Optional<RawEmailDataEntity> findEmailExact(String email);
+
+    /**
+     * @return Contacts count for userId.
+     */
+    @Query(nativeQuery = true, value =
+            "SELECT COUNT(id) FROM \"email_data\" d WHERE d.user_id = :userId")
+    int countContacts(long userId);
 }

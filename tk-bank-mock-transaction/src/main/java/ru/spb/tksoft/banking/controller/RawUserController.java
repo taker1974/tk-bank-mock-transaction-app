@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import ru.spb.tksoft.banking.dto.RawContactItemDto;
+import ru.spb.tksoft.banking.dto.RawContactListDto;
 import ru.spb.tksoft.banking.dto.RawUserDto;
-import ru.spb.tksoft.banking.dto.UserDto;
 import ru.spb.tksoft.banking.service.RawUserService;
 import ru.spb.tksoft.banking.service.RawUserServiceCached;
 import java.time.LocalDate;
@@ -69,9 +69,9 @@ public class RawUserController {
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/search/age")
     public Page<RawUserDto> findUsersByDateOfBirth(@AuthenticationPrincipal JwtUser user,
-            @RequestParam(defaultValue = "1900") int year,
-            @RequestParam(defaultValue = "1") int month,
-            @RequestParam(defaultValue = "1") int day,
+            @RequestParam(required = true, defaultValue = "1900") int year,
+            @RequestParam(required = true, defaultValue = "1") int month,
+            @RequestParam(required = true, defaultValue = "1") int day,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -85,7 +85,7 @@ public class RawUserController {
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/search/email")
     public RawUserDto findUsersByEmailExact(@AuthenticationPrincipal JwtUser user,
-            @RequestParam String email) {
+            @RequestParam(required = true) String email) {
 
         return rawUserServiceCached.findUserByEmailExact(email);
     }
@@ -95,17 +95,35 @@ public class RawUserController {
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/search/phone")
     public RawUserDto findUsersByPhoneExact(@AuthenticationPrincipal JwtUser user,
-            @RequestParam String phone) {
+            @RequestParam(required = true) String phone) {
 
         return rawUserServiceCached.findUserByPhoneExact(phone);
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "List own emails",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/email/list")
+    public RawContactListDto listEmails(@AuthenticationPrincipal JwtUser user) {
+
+        return rawUserServiceCached.getUserEmails(user);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "List own phones",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/phone/list")
+    public RawContactListDto listPhones(@AuthenticationPrincipal JwtUser user) {
+
+        return rawUserServiceCached.getUserPhones(user);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Add email to user",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/add/email")
+    @GetMapping("/email/add")
     public RawContactItemDto addEmail(@AuthenticationPrincipal JwtUser user,
-            @RequestParam String email) {
+            @RequestParam(required = true) String email) {
 
         return rawUserServiceCached.addEmail(user, email);
     }
@@ -113,11 +131,53 @@ public class RawUserController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Add phone to user",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/add/phone")
+    @GetMapping("/phone/add")
     public RawContactItemDto addPhone(@AuthenticationPrincipal JwtUser user,
-            @RequestParam String phone) {
+            @RequestParam(required = true) String phone) {
 
         return rawUserServiceCached.addPhone(user, phone);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove email from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/email/remove")
+    public void removeEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam(required = true) long emailId) {
+
+        rawUserServiceCached.removeEmail(user, emailId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove phone from user",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/phone/remove")
+    public void removePhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam(required = true) long phoneId) {
+
+        rawUserServiceCached.removePhone(user, phoneId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update email",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/email/update")
+    public RawContactItemDto updateEmail(@AuthenticationPrincipal JwtUser user,
+            @RequestParam(required = true) long emailId, 
+            @RequestParam(required = true) String newEmail) {
+
+        return rawUserServiceCached.updateEmail(user, emailId, newEmail);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update phone",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/phone/update")
+    public RawContactItemDto updatePhone(@AuthenticationPrincipal JwtUser user,
+            @RequestParam(required = true) long phoneId, 
+            @RequestParam(required = true) String newPhone) {
+
+        return rawUserServiceCached.updatePhone(user, phoneId, newPhone);
     }
 
 }
